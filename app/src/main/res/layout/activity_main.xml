@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:background="@color/defaultColor"
+    >
+    <TextView
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Game settings"
+        android:textSize="20sp"
+/>
+<RadioGroup
+
+    android:background="@color/lightgrey"
+    android:layout_margin="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RadioButton
+
+        android:id="@+id/rb1"
+        android:layout_margin="7dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Human vs Human"
+        android:onClick="onRadioButtonClicked"/>
+    <RadioButton
+        android:id="@+id/rb2"
+        android:layout_margin="7dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Human vs Computer"
+        android:onClick="onRadioButtonClicked"/>
+    <RadioButton
+        android:id="@+id/rb3"
+        android:layout_margin="7dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Computer vs Computer"
+        android:onClick="onRadioButtonClicked"/>
+</RadioGroup>
+    <CheckBox
+        android:id="@+id/cb"
+        android:background="@color/lightgrey"
+        android:layout_margin="20dp"
+        android:textSize="18sp"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Read from file"
+        />
+<TextView
+    android:id="@+id/tv"
+    android:alpha="0"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Difficulty"
+    android:textSize="20sp"
+    android:layout_gravity="center"/>
+    <Spinner
+
+        android:alpha="0"
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="50dp"
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+       />
+
+    <Button
+        android:layout_marginTop="85dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Start game"
+        android:padding="10dp"
+        android:background="@color/lightgrey"
+        android:onClick="StartGame"
+        />
+
+</LinearLayout>
