@@ -5,14 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HumanVsComputerActivity"
+    tools:context=".etf.santorini.cd150570d.HumanVsComputerActivity"
     android:orientation="vertical"
     >
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="12"
-        tools:context=".MainActivity"
+        tools:context=".etf.santorini.cd150570d.MainActivity"
         android:columnCount="5"
         android:id="@+id/gridLayout"
         android:background="@color/grey">

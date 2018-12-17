@@ -1,4 +1,4 @@
-package com.example.cira.isproject;
+package com.example.cira.isproject.etf.santorini.cd150570d;
 
 import android.Manifest;
 import android.content.Intent;
@@ -10,9 +10,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.TextView;
+
+import com.example.cira.isproject.R;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -23,6 +26,7 @@ import java.io.IOException;
 public class HumanVsHumanActivity extends AppCompatActivity {
     private static final int MY_REQUEST_PERMISSION_WRITE_EXTERNAL = 3;
     private static final int N = 5;
+
     private enum State{
         PLACING, SELECTING_MOVE, MOVING, BUILDING, GAME_OVER
     }
@@ -31,6 +35,7 @@ public class HumanVsHumanActivity extends AppCompatActivity {
         RED, BLUE, NONE
     }
 
+    // struct that represent one field on board and information about it's state
     private class Field{
         private Player playerOn;
         private int level;
@@ -41,19 +46,20 @@ public class HumanVsHumanActivity extends AppCompatActivity {
             isGreen = false;
         }
     }
-    TextView[][] views = new TextView[N][N];
-    Field[][] fields = new Field[N][N];
-    State currentState;
-    Player turn;
-    int leftPlacing;
-    TextView currentMovingView;
-    Field currentMovingField;
-    TextView gameInfo;
-    String line = "";
 
-    String numToLetter[] = {"A", "B", "C", "D", "E"};
+    private TextView[][] views = new TextView[N][N];
+    private Field[][] fields = new Field[N][N];
+    private State currentState;
+    private Player turn;
+    private int leftPlacing;
+    private TextView currentMovingView;
+    private Field currentMovingField;
+    private TextView gameInfo;
+    private String line = "";
+    private String numToLetter[] = {"A", "B", "C", "D", "E"};
 
-
+    // initial method that execute on activity start
+    // initialize some structures and check if read from file is checked
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +86,8 @@ public class HumanVsHumanActivity extends AppCompatActivity {
 
     }
 
+    // Main logic of game, called when field is pressed
+    // execute code based on the current state of the game (PLACING, SELECTING_MOVE, MOVING, BUILDING, GAME_OVER) and player
     public void onFieldClick(View view) {
 
         String tag = (String) view.getTag();
@@ -96,6 +104,11 @@ public class HumanVsHumanActivity extends AppCompatActivity {
                     if (turn == Player.BLUE){
                         leftPlacing--;
                         line += numToLetter[x]+(y+1);
+
+                        AlphaAnimation animation1 = new AlphaAnimation(0.2f, 1.0f);
+                        animation1.setDuration(1000);
+
+                        selectedView.startAnimation(animation1);
                         selectedView.setBackgroundColor(getBlueColor());
                         selectedField.playerOn = Player.BLUE;
                         if (leftPlacing == 0){
@@ -111,6 +124,10 @@ public class HumanVsHumanActivity extends AppCompatActivity {
                     }else{
                         leftPlacing--;
                         line += numToLetter[x]+(y+1);
+                        AlphaAnimation animation1 = new AlphaAnimation(0.2f, 1.0f);
+                        animation1.setDuration(1000);
+
+                        selectedView.startAnimation(animation1);
                         selectedView.setBackgroundColor(getRedColor());
                         selectedField.playerOn = Player.RED;
                         if (leftPlacing == 0){
@@ -159,14 +176,26 @@ public class HumanVsHumanActivity extends AppCompatActivity {
             case MOVING:
                 if (selectedField.isGreen){
                     currentMovingField.playerOn = Player.NONE;
+                    AlphaAnimation animation1 = new AlphaAnimation(0.2f, 1.0f);
+                    animation1.setDuration(1000);
+
+                    selectedView.startAnimation(animation1);
                     currentMovingView.setBackgroundColor(getDefaultColor());
                     clearGreen();
                     selectedField.playerOn = turn;
                     if (selectedField.level == 3){
                         if (turn == Player.BLUE){
+                            animation1 = new AlphaAnimation(0.2f, 1.0f);
+                            animation1.setDuration(1000);
+
+                            selectedView.startAnimation(animation1);
                             selectedView.setBackgroundColor(getBlueColor());
                             gameInfo.setText("BLUE won!");
                         }else{
+                            animation1 = new AlphaAnimation(0.2f, 1.0f);
+                            animation1.setDuration(1000);
+
+                            selectedView.startAnimation(animation1);
                             selectedView.setBackgroundColor(getRedColor());
                             gameInfo.setText("RED won!");
                         }
@@ -175,11 +204,19 @@ public class HumanVsHumanActivity extends AppCompatActivity {
                         currentState = State.GAME_OVER;
                     }else{
                         if (turn == Player.BLUE){
+                             animation1 = new AlphaAnimation(0.2f, 1.0f);
+                            animation1.setDuration(1000);
+
+                            selectedView.startAnimation(animation1);
                             gameInfo.setText("BLUE build: ");
                             selectedView.setBackgroundColor(getBlueColor());
                         }
 
                         else{
+                             animation1 = new AlphaAnimation(0.2f, 1.0f);
+                            animation1.setDuration(1000);
+
+                            selectedView.startAnimation(animation1);
                             gameInfo.setText("RED build: ");
                             selectedView.setBackgroundColor(getRedColor());
                         }
@@ -198,6 +235,10 @@ public class HumanVsHumanActivity extends AppCompatActivity {
 
                     clearGreen();
                     selectedField.level++;
+                    AlphaAnimation animation1 = new AlphaAnimation(0.2f, 1.0f);
+                    animation1.setDuration(1000);
+
+                    selectedView.startAnimation(animation1);
                     selectedView.setText(selectedField.level+"");
                     if (turn == Player.BLUE){
                         gameInfo.setText("RED select: ");
@@ -220,6 +261,7 @@ public class HumanVsHumanActivity extends AppCompatActivity {
 
     }
 
+    // check if the game is over (someone won)
     private void checkIsGameOver() {
         if (turn == Player.BLUE){
             for (int i = 0; i < N; i++)
@@ -255,6 +297,7 @@ public class HumanVsHumanActivity extends AppCompatActivity {
 
     }
 
+    // check if player can even move
     private boolean chechIfCanMove() {
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++){
@@ -265,6 +308,7 @@ public class HumanVsHumanActivity extends AppCompatActivity {
         return false;
     }
 
+    // green color all possible builds for moved figure
     private void colorPossibleBuilds(int x, int y) {
         if (x-1 >= 0 && fields[x-1][y].playerOn == Player.NONE && fields[x-1][y].level < 4){
             fields[x-1][y].isGreen = true;
@@ -301,6 +345,7 @@ public class HumanVsHumanActivity extends AppCompatActivity {
         }
     }
 
+    // default color all fields that was green
     private void clearGreen() {
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++){
@@ -311,7 +356,7 @@ public class HumanVsHumanActivity extends AppCompatActivity {
             }
     }
 
-
+    // green color all possible moves for selected figure but only in stucture not in gui
     private void colorPossibleMoves(int x, int y) {
 
         if (x-1 >= 0 && fields[x-1][y].playerOn == Player.NONE && difference(x,y,x-1,y) <= 1 && fields[x-1][y].level < 4){
@@ -349,24 +394,26 @@ public class HumanVsHumanActivity extends AppCompatActivity {
         }
     }
 
-
-
+    // return difference in levels of two passed fields
     private int difference(int srcX, int srcY, int dstX, int dstY) {
         return fields[dstX][dstY].level - fields[srcX][srcY].level;
     }
 
+    // return X coordinate from passed tag of field
     int getX(String tag){
         int x = Integer.parseInt(tag);
         x = x / N;
         return x;
     }
 
+    // return Y coordinate from passed tag of field
     int getY(String tag){
         int y = Integer.parseInt(tag);
         y = y % N;
         return y;
     }
 
+    // write just performed turn in output.txt
     public void writeTurnInOutputFile(String line) {
         try {
             File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
@@ -381,6 +428,8 @@ public class HumanVsHumanActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    // make sure output.txt is empty on start of game
     public void clearOutputFile() {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -405,6 +454,7 @@ public class HumanVsHumanActivity extends AppCompatActivity {
         }
     }
 
+    // read from input.txt
     void readFromInputFile(){
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
         File outputFile = new File(storageDir, "input.txt");
@@ -429,11 +479,13 @@ public class HumanVsHumanActivity extends AppCompatActivity {
         }
     }
 
+    // parse num from file and return it as correct value for structures
     private int numFromFile(String s) {
         int y = Integer.parseInt(s);
         return y-1;
     }
 
+    // return corresponding number from letters from file
     int letterToNum(String letter){
 
         for (int i = 0; i < N; i++)
@@ -443,18 +495,22 @@ public class HumanVsHumanActivity extends AppCompatActivity {
         return -1;
     }
 
-
+    // return value for default color of field
     private int getDefaultColor() {
         return ContextCompat.getColor(this,R.color.defaultColor);
     }
 
+    // return value for green color for possible moves and builds
     private int getGreenColor() {
         return ContextCompat.getColor(this,R.color.possibleMovesColor);
     }
 
+    // return value for blue color for blue player
     int getBlueColor(){
         return ContextCompat.getColor(this,R.color.blue);
     }
+
+    // return value for red color for red player
     int getRedColor(){
         return ContextCompat.getColor(this, R.color.red);
     }

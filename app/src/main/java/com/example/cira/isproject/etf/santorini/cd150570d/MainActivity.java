@@ -1,33 +1,19 @@
-package com.example.cira.isproject;
+package com.example.cira.isproject.etf.santorini.cd150570d;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import com.example.cira.isproject.R;
 
 public class MainActivity extends AppCompatActivity {
-
-
 
     private enum TypeOfGame{
         HumanVsHuman, HumanVsComputer, ComputerVsComputer
@@ -35,8 +21,11 @@ public class MainActivity extends AppCompatActivity {
 
     private TypeOfGame typeofGame;
     private String difficulty;
-    Spinner spinner;
-    TextView tv;
+    private Spinner spinner;
+    private TextView tv;
+
+    // initial method that execute on program start
+    // initialize some structures and listeners
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
 
         spinner.setAdapter(adapter);
 
-
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -71,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // called when start game button pressed
+    // based on selected type of game start corresponding activity and pass them some information
     public void StartGame(View view) {
         boolean readFile = false;
         CheckBox cb = findViewById(R.id.cb);
@@ -99,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // called when radio button for type of game is changed
+    // to remember the choice and possibly show spinner with difficulties for computer
     public void onRadioButtonClicked(View view) {
         boolean checked = ((RadioButton) view).isChecked();
         switch (view.getId()){

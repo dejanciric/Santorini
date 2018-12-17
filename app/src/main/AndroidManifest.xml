@@ -11,16 +11,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".etf.santorini.cd150570d.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".HumanVsHumanActivity" />
-        <activity android:name=".HumanVsComputerActivity" />
-        <activity android:name=".ComputerVsComputerActivity"></activity>
+        <activity android:name=".etf.santorini.cd150570d.HumanVsHumanActivity" />
+        <activity android:name=".etf.santorini.cd150570d.HumanVsComputerActivity" />
+        <activity android:name=".etf.santorini.cd150570d.ComputerVsComputerActivity"></activity>
     </application>
 
 </manifest>

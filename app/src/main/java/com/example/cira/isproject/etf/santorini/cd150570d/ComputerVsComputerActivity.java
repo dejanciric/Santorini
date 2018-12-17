@@ -1,4 +1,4 @@
-package com.example.cira.isproject;
+package com.example.cira.isproject.etf.santorini.cd150570d;
 
 import android.Manifest;
 import android.content.Intent;
@@ -9,8 +9,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.GridLayout;
 import android.widget.TextView;
+
+import com.example.cira.isproject.R;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,21 +23,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-import javax.xml.transform.Templates;
-
 public class ComputerVsComputerActivity extends AppCompatActivity {
     private static final int MY_REQUEST_PERMISSION_WRITE_EXTERNAL = 3;
     private static final int N = 5;
     private static final int PLUS_INF = 1000000;
     private static final int MINUS_INF = -1000000;
+
     private enum State{
         PLACING, SELECTING_MOVE, MOVING, BUILDING, GAME_OVER
     }
-
     private enum Player{
         RED, BLUE, NONE
     }
 
+    // struct for AIMove that contains information about move, build, estimated heuristic function, alpha, beta..
     private class AIMove{
         private int xFigure, yFigure, xMove, yMove, xBuild, yBuild;
         private int score;
@@ -48,6 +50,7 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
 
     }
 
+    // struct that represent one field on board and information about it's state
     private class Field{
         private ComputerVsComputerActivity.Player playerOn;
         private int level;
@@ -58,22 +61,23 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
             isGreen = false;
         }
     }
-    TextView[][] views = new TextView[N][N];
-    ComputerVsComputerActivity.Field[][] fields = new ComputerVsComputerActivity.Field[N][N];
-    ComputerVsComputerActivity.State currentState;
-    ComputerVsComputerActivity.Player turn;
-    int leftPlacing;
-    TextView currentMovingView;
-    ComputerVsComputerActivity.Field currentMovingField;
-    TextView gameInfo;
-    String line = "";
-    String difficulty;
+
+    private TextView[][] views = new TextView[N][N];
+    private ComputerVsComputerActivity.Field[][] fields = new ComputerVsComputerActivity.Field[N][N];
+    private ComputerVsComputerActivity.State currentState;
+    private ComputerVsComputerActivity.Player turn;
+    private int leftPlacing;
+    private TextView currentMovingView;
+    private ComputerVsComputerActivity.Field currentMovingField;
+    private TextView gameInfo;
+    private String line = "";
+    private String difficulty;
     boolean readFile;
     boolean finish = false;
+    private String numToLetter[] = {"A", "B", "C", "D", "E"};
 
-    String numToLetter[] = {"A", "B", "C", "D", "E"};
-
-
+    // initial method that execute on activity start
+    // initialize some structures and check if read from file is checked
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +104,8 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
 
     }
 
+    // Main logic of game
+    // execute code based on the current state of the game (PLACING, SELECTING_MOVE, MOVING, BUILDING, GAME_OVER)
     public void onFieldClick(View view) {
 
         String tag = (String) view.getTag();
@@ -116,6 +122,10 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
                     if (turn == ComputerVsComputerActivity.Player.BLUE){
                         leftPlacing--;
                         line += numToLetter[x]+(y+1);
+                        AlphaAnimation animation1 = new AlphaAnimation(0.2f, 1.0f);
+                        animation1.setDuration(1000);
+
+                        selectedView.startAnimation(animation1);
                         selectedView.setBackgroundColor(getBlueColor());
                         selectedField.playerOn = ComputerVsComputerActivity.Player.BLUE;
 
@@ -146,12 +156,18 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
                     }else{
                         leftPlacing--;
                         line += numToLetter[x]+(y+1);
+                        AlphaAnimation animation1 = new AlphaAnimation(0.2f, 1.0f);
+                        animation1.setDuration(1000);
+
+                        selectedView.startAnimation(animation1);
+
+
                         selectedView.setBackgroundColor(getRedColor());
                         selectedField.playerOn = ComputerVsComputerActivity.Player.RED;
                         if (leftPlacing == 0){
                             turn = ComputerVsComputerActivity.Player.BLUE;
                             currentState = ComputerVsComputerActivity.State.SELECTING_MOVE;
-                            gameInfo.setText("BLUE select: ");
+                            gameInfo.setText("BLUE turn: ");
                             writeTurnInOutputFile(line);
                             line="";
                         }else{
@@ -206,14 +222,26 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
             case MOVING:
                 if (selectedField.isGreen){
                     currentMovingField.playerOn = ComputerVsComputerActivity.Player.NONE;
+                    AlphaAnimation animation1 = new AlphaAnimation(0.2f, 1.0f);
+                    animation1.setDuration(1000);
+
+                    selectedView.startAnimation(animation1);
                     currentMovingView.setBackgroundColor(getDefaultColor());
                     clearGreen();
                     selectedField.playerOn = turn;
                     if (selectedField.level == 3){
                         if (turn == ComputerVsComputerActivity.Player.BLUE){
+                             animation1 = new AlphaAnimation(0.2f, 1.0f);
+                            animation1.setDuration(1000);
+
+                            selectedView.startAnimation(animation1);
                             selectedView.setBackgroundColor(getBlueColor());
                             gameInfo.setText("BLUE won!");
                         }else{
+                             animation1 = new AlphaAnimation(0.2f, 1.0f);
+                            animation1.setDuration(1000);
+
+                            selectedView.startAnimation(animation1);
                             selectedView.setBackgroundColor(getRedColor());
                             gameInfo.setText("RED won!");
                         }
@@ -223,11 +251,19 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
                     }else{
                         if (turn == ComputerVsComputerActivity.Player.BLUE){
                             gameInfo.setText("BLUE build: ");
+                             animation1 = new AlphaAnimation(0.2f, 1.0f);
+                            animation1.setDuration(1000);
+
+                            selectedView.startAnimation(animation1);
                             selectedView.setBackgroundColor(getBlueColor());
                         }
 
                         else{
                             gameInfo.setText("RED build: ");
+                             animation1 = new AlphaAnimation(0.2f, 1.0f);
+                            animation1.setDuration(1000);
+
+                            selectedView.startAnimation(animation1);
                             selectedView.setBackgroundColor(getRedColor());
                         }
                         line+= " "+numToLetter[x]+(y+1);
@@ -245,9 +281,13 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
 
                     clearGreen();
                     selectedField.level++;
+                    AlphaAnimation animation1 = new AlphaAnimation(0.2f, 1.0f);
+                    animation1.setDuration(1000);
+
+                    selectedView.startAnimation(animation1);
                     selectedView.setText(selectedField.level+"");
                     if (turn == ComputerVsComputerActivity.Player.BLUE){
-                        gameInfo.setText("RED select: ");
+                        gameInfo.setText("RED turn: ");
                         turn = ComputerVsComputerActivity.Player.RED;
                         line+= " "+numToLetter[x]+(y+1);
                         writeTurnInOutputFile(line);
@@ -258,7 +298,7 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
                     }
 
                     else{
-                        gameInfo.setText("BLUE select: ");
+                        gameInfo.setText("BLUE turn: ");
                         turn = ComputerVsComputerActivity.Player.BLUE;
                         line+= " "+numToLetter[x]+(y+1);
                         writeTurnInOutputFile(line);
@@ -276,6 +316,8 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
 
     }
 
+    // Recursive method that implement minimax algorithm with alpha beta pruning
+    // and return best move for computer
     private AIMove getBestMoveAlphaBeta(Player player, int h, AIMove moveForHeuristic, int alpha, int beta) {
 
         // add or game finished
@@ -339,6 +381,7 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
         return oneNodeMoves.get(bestMoveIndex);
     }
 
+    // Method that perform passed move ( used when computer find best move from minimax )
     private void performMove(AIMove bestMove, Player red) {
         currentState = State.SELECTING_MOVE;
         onFieldClick(views[bestMove.xFigure][bestMove.yFigure]);
@@ -348,7 +391,8 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
 
     }
 
-    AIMove getBestMove(Player player, int h, AIMove moveForHeuristic){
+    // Recursive method that implement minimax algorithm and return best move for computer
+    private AIMove getBestMove(Player player, int h, AIMove moveForHeuristic){
 
         // add or game finished
         if (h == 2){
@@ -422,6 +466,7 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
 
     }
 
+    // Heuristic function that calculate and return estimated value
     private int heuristicFunction(AIMove move, Player player) {
         if (difficulty.equals("Hard")){
             if (player == Player.BLUE){
@@ -453,7 +498,7 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
 
     }
 
-    // calculate substraction of 2 players figures
+    // calculate subtraction of 2 players figures distance
     private int distance(int xBuild, int yBuild, Player player) {
         int dist1 = calcDistanceForPlayer(xBuild, yBuild, player);
         int dist2 = 0;
@@ -465,7 +510,7 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
         return dist1-dist2;
     }
 
-    // calculate distance for player, sum of both figures distances
+    // calculate distance for one player, sum of both figures distances
     private int calcDistanceForPlayer(int xBuild, int yBuild, Player player) {
         ArrayList<Integer> dists = new ArrayList<Integer>();
         for (int i = 0; i < N; i++)
@@ -476,6 +521,8 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
         int distance = dists.get(0)+dists.get(1);
         return distance;
     }
+
+    // check if player is next to passed field
     private boolean isDistanceOne(int xBuild, int yBuild, Player player){
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++){
@@ -486,7 +533,6 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
 
         return false;
     }
-
 
     // calculate distance for one given figure
     private Integer calcDistanceForFigure(int dstX, int dstY, int figX, int figY) {
@@ -528,17 +574,21 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
         return distance;
     }
 
+    // do a move in case of recursively calculating in minimax algorithm for proper state
     private void doMove(AIMove move, Player player) {
         fields[move.xFigure][move.yFigure].playerOn = Player.NONE;
         fields[move.xMove][move.yMove].playerOn = player;
         fields[move.xBuild][move.yBuild].level++;
     }
+
+    // undo a move in case of recursively calculating in minimax algorithm for proper state
     private void undoMove(AIMove move, Player player) {
         fields[move.xFigure][move.yFigure].playerOn = player;
         fields[move.xMove][move.yMove].playerOn = Player.NONE;
         fields[move.xBuild][move.yBuild].level--;
 
     }
+
     // get all potential moves and builds and return them as arraylist
     private ArrayList<AIMove> getAllPossibleMovesAndBuilds(Player player) {
 
@@ -610,6 +660,7 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
         return moves;
     }
 
+    // check if the game is over (someone won)
     private void checkIsGameOver() {
         if (turn == ComputerVsComputerActivity.Player.BLUE){
             for (int i = 0; i < N; i++)
@@ -645,37 +696,7 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
 
     }
 
-    private boolean isGameOver(Player player){
-        if (player == ComputerVsComputerActivity.Player.BLUE){
-            for (int i = 0; i < N; i++)
-                for (int j = 0; j < N; j++){
-                    if (fields[i][j].playerOn == ComputerVsComputerActivity.Player.BLUE){
-                        colorPossibleMovesLogical(i,j);
-                    }
-                }
-
-            if (!chechIfCanMove()){
-                return true;
-            }
-            clearGreenLogical();
-
-        }else{
-            for (int i = 0; i < N; i++)
-                for (int j = 0; j < N; j++){
-                    if (fields[i][j].playerOn == ComputerVsComputerActivity.Player.RED){
-                        colorPossibleMovesLogical(i,j);
-                    }
-                }
-
-            if (!chechIfCanMove()){
-                return true;
-            }
-            clearGreenLogical();
-
-        }
-        return false;
-    }
-
+    // check if player can even move
     private boolean chechIfCanMove() {
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++){
@@ -686,6 +707,7 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
         return false;
     }
 
+    // green color all possible builds for moved figure
     private void colorPossibleBuilds(int x, int y) {
         if (x-1 >= 0 && fields[x-1][y].playerOn == ComputerVsComputerActivity.Player.NONE && fields[x-1][y].level < 4){
             fields[x-1][y].isGreen = true;
@@ -721,6 +743,8 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
             views[x+1][y-1].setBackgroundColor(getGreenColor());
         }
     }
+
+    // green color all possible builds for moved figure but only in stucture not in gui
     private void colorPossibleBuildsLogical(int x, int y) {
         if (x-1 >= 0 && fields[x-1][y].playerOn == ComputerVsComputerActivity.Player.NONE && fields[x-1][y].level < 4){
             fields[x-1][y].isGreen = true;
@@ -749,6 +773,7 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
         }
     }
 
+    // default color all fields that are green
     private void clearGreen() {
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++){
@@ -759,6 +784,7 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
             }
     }
 
+    // default color all fields that was green but only in stucture not in gui
     private void clearGreenLogical() {
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++){
@@ -768,7 +794,7 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
             }
     }
 
-
+    // green color all possible moves for selected figure but only in stucture not in gui
     private void colorPossibleMoves(int x, int y) {
 
         if (x-1 >= 0 && fields[x-1][y].playerOn == ComputerVsComputerActivity.Player.NONE && difference(x,y,x-1,y) <= 1 && fields[x-1][y].level < 4){
@@ -806,6 +832,7 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
         }
     }
 
+    // green color all possible moves for selected figure but only in stucture not in gui
     private void colorPossibleMovesLogical(int x, int y) {
 
         if (x-1 >= 0 && fields[x-1][y].playerOn == ComputerVsComputerActivity.Player.NONE && difference(x,y,x-1,y) <= 1 && fields[x-1][y].level < 4){
@@ -839,23 +866,26 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
         }
     }
 
-
+    // return difference in levels of two passed fields
     private int difference(int srcX, int srcY, int dstX, int dstY) {
         return fields[dstX][dstY].level - fields[srcX][srcY].level;
     }
 
+    // return X coordinate from passed tag of field
     int getX(String tag){
         int x = Integer.parseInt(tag);
         x = x / N;
         return x;
     }
 
+    // return Y coordinate from passed tag of field
     int getY(String tag){
         int y = Integer.parseInt(tag);
         y = y % N;
         return y;
     }
 
+    // write just performed turn (line) in output.txt
     public void writeTurnInOutputFile(String line) {
         try {
             File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
@@ -870,6 +900,8 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    // make sure output.txt is empty on start of game
     public void clearOutputFile() {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -894,6 +926,7 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
         }
     }
 
+    // read from input.txt
     void readFromInputFile(){
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
         File outputFile = new File(storageDir, "input.txt");
@@ -921,11 +954,13 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
         }
     }
 
+    // parse num from file and return it as correct value for structures
     private int numFromFile(String s) {
         int y = Integer.parseInt(s);
         return y-1;
     }
 
+    // return corresponding number from letters from file
     int letterToNum(String letter){
 
         for (int i = 0; i < N; i++)
@@ -935,6 +970,7 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
         return -1;
     }
 
+    // perform move for a player that is on turn
     public void nextMove(View view) {
         if (currentState != State.GAME_OVER){
             if (currentState == State.PLACING){
@@ -969,29 +1005,38 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
                         }
                     }
                 }
+
             }
         }
 
     }
 
+    // do next move until state is game over, execute moves till someone win
     public void finish(View view) {
         finish = true;
-        while(currentState != State.GAME_OVER)
+        while(currentState != State.GAME_OVER){
             nextMove(null);
+
+        }
+
     }
 
-
+    // return value for default color of field
     private int getDefaultColor() {
         return ContextCompat.getColor(this,R.color.defaultColor);
     }
 
+    // return value for green color for possible moves and builds
     private int getGreenColor() {
         return ContextCompat.getColor(this,R.color.possibleMovesColor);
     }
 
+    // return value for blue color for blue player
     int getBlueColor(){
         return ContextCompat.getColor(this,R.color.blue);
     }
+
+    // return value for red color for red player
     int getRedColor(){
         return ContextCompat.getColor(this, R.color.red);
     }
