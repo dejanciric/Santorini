@@ -319,7 +319,8 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
     // Recursive method that implement minimax algorithm with alpha beta pruning
     // and return best move for computer
     private AIMove getBestMoveAlphaBeta(Player player, int h, AIMove moveForHeuristic, int alpha, int beta) {
-
+            int alpha1 = alpha;
+            int beta1 = beta;
         // add or game finished
         if (h == 2)
             return new AIMove(heuristicFunction(moveForHeuristic, Player.BLUE));
@@ -334,19 +335,27 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
             AIMove move = moves.get(i);
             doMove(move, player);
             if (player == Player.RED){
-                move.score = getBestMoveAlphaBeta(Player.BLUE, ++h, move, alpha, beta).score;
+                move.score = getBestMoveAlphaBeta(Player.BLUE, ++h, move, alpha1, beta1).score;
             }else{
-                move.score = getBestMoveAlphaBeta(Player.RED, ++h, move, alpha, beta).score;
+                move.score = getBestMoveAlphaBeta(Player.RED, ++h, move, alpha1, beta1).score;
             }
             h--;
             if (h == 1){
-                alpha = move.score;
+                if (move.score > alpha1){
+                    move.alpha = move.score;
+                    alpha1 = move.score;
+                }
+
             }else if (h == 0){
-                beta = move.alpha;
+                if (beta1 > move.alpha){
+                    move.beta = move.alpha;
+                    beta1 = move.alpha;
+                }
+
             }
             oneNodeMoves.add(move);
             undoMove(move, player);
-            if (alpha >= beta)
+            if (alpha1 >= beta1)
                 break;
         }
 
@@ -375,8 +384,18 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
                     bestMoveIndex = i;
                 }
         }
-        if (moveForHeuristic != null)
-            oneNodeMoves.get(bestMoveIndex).score -= heuristicFunction(oneNodeMoves.get(bestMoveIndex), Player.RED);
+        if (moveForHeuristic != null && h == 1){
+            if (player == Player.RED){
+                undoMove(moveForHeuristic, Player.BLUE);
+                oneNodeMoves.get(bestMoveIndex).score -= heuristicFunction(moveForHeuristic, Player.BLUE);
+                doMove(moveForHeuristic, Player.BLUE);
+            }else{
+                undoMove(moveForHeuristic, Player.RED);
+                oneNodeMoves.get(bestMoveIndex).score -= heuristicFunction(moveForHeuristic, Player.RED);
+                doMove(moveForHeuristic, Player.RED);
+            }
+
+        }
 
         return oneNodeMoves.get(bestMoveIndex);
     }
@@ -947,8 +966,7 @@ public class ComputerVsComputerActivity extends AppCompatActivity {
             bufferedReader.close();
             reader.close();
             readFile = false;
-            if (turn == Player.RED)
-                performMove(getBestMove(Player.RED, 0, null), Player.RED);
+
         }catch (Exception e){
 
         }
